@@ -1,7 +1,3 @@
-output "vpc_id" {
-  value = aws_vpc.main_vpc.id
-}
-
 output "eks_cluster_name" {
   value = module.eks.cluster_name
 }
@@ -10,14 +6,26 @@ output "eks_cluster_endpoint" {
   value = module.eks.cluster_endpoint
 }
 
-output "eks_cluster_kubeconfig" {
-  value = module.eks.kubeconfig
+output "dynamodb_table_name" {
+  value = aws_dynamodb_table.digital_twin_db.name
 }
 
 output "s3_bucket_name" {
-  value = aws_s3_bucket.terraform_state.bucket
+  value = aws_s3_bucket.digital_twin_bucket.bucket
 }
 
-output "dynamodb_table_name" {
-  value = aws_dynamodb_table.terraform_locks.name
+output "api_gateway_url" {
+  value = aws_apigatewayv2_api.digital_twin_api.api_endpoint
+}
+
+output "cloudfront_domain_name" {
+  value = aws_cloudfront_distribution.digital_twin_frontend.domain_name
+}
+
+output "grafana_url" {
+  value = "http://your-grafana-url"
+}
+
+output "jenkins_url" {
+  value = "http://your-jenkins-url"
 }

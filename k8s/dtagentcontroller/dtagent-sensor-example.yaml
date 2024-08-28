@@ -1,0 +1,9 @@
+apiVersion: digitaltwin.example.com/v1
+kind: SensorAgent
+metadata:
+  name: temperature-sensor
+spec:
+  sensorType: temperature
+  protocol: mqtt
+  image: your-docker-repo/sensor-agent
+  replicas: 2

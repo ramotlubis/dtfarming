@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubeedge
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudcore
+  namespace: kubeedge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloudcore
+  template:
+    metadata:
+      labels:
+        app: cloudcore
+    spec:
+      containers:
+        - name: cloudcore
+          image: kubeedge/cloudcore:v1.10.0
+          ports:
+            - containerPort: 10000
+            - containerPort: 10001
+          volumeMounts:
+            - name: cloudcore-config
+              mountPath: /etc/kubeedge/
+      volumes:
+        - name: cloudcore-config
+          configMap:
+            name: cloudcore-config
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudcore-config
+  namespace: kubeedge
+data:
+  cloudcore.yaml: |
+    apiVersion: v1
+    kind: CloudCore
+    modules:
+      cloudHub:
+        enable: true
+        address: 0.0.0.0
+        port: 10000
+      edgeController:
+        enable: true
+      deviceController:
+        enable: true

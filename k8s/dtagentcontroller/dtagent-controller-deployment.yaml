@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dtagent-sensor-agent-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dtagent-sensor-agent-controller
+  template:
+    metadata:
+      labels:
+        app: dtagent-sensor-agent-controller
+    spec:
+      containers:
+        - name: dtagent-sensor-agent-controller
+          image: your-docker-repo/sensor-agent-controller
+          env:
+            - name: KUBECONFIG
+              value: "/root/.kube/config"

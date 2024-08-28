@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubeedge
+
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: edgecore
+  namespace: kubeedge
+spec:
+  selector:
+    matchLabels:
+      app: edgecore
+  template:
+    metadata:
+      labels:
+        app: edgecore
+    spec:
+      containers:
+        - name: edgecore
+          image: kubeedge/edgecore:v1.10.0
+          ports:
+            - containerPort: 10000
+          volumeMounts:
+            - name: edgecore-config
+              mountPath: /etc/kubeedge/
+      volumes:
+        - name: edgecore-config
+          configMap:
+            name: edgecore-config
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: edgecore-config
+  namespace: kubeedge
+data:
+  edgecore.yaml: |
+    apiVersion: v1
+    kind: EdgeCore
+    modules:
+      edgeHub:
+        enable: true
+        websocket:
+          url: ws://cloudcore.kubeedge:10000
+          handshakeTimeout: 30
+          writeDeadline: 15
+          readDeadline: 15

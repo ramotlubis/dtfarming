@@ -1,7 +1,15 @@
 variable "region" {
-  default = "ap-southeast-1"
+  default = "us-west-2"
 }
 
 variable "cluster_name" {
-  default = "dtfarming-kubeedge-eks-cluster"
+  default = "digital-twin-eks-cluster"
+}
+
+variable "grafana_password" {
+  default = "your-grafana-password"
+}
+
+variable "jenkins_password" {
+  default = "your-jenkins-password"
 }
