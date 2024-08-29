@@ -1,0 +1,12 @@
+apiVersion: digitaltwin.example.com/v1
+kind: SensorAgent
+metadata:
+  name: co2-sensor
+spec:
+  sensorType: co2
+  image: your-docker-repo/sensor-agent:latest
+  sensorId: co2-sensor-001
+  sensorLocationId: location-003
+  sitewiseAssetId: your-co2-asset-id
+  sitewisePropertyId: your-co2-property-id
+  replicas: 1

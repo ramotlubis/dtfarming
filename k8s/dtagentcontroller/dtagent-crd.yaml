@@ -21,6 +21,14 @@ spec:
                   type: string
                 image:
                   type: string
+                sensorId:
+                  type: string
+                sensorLocationId:
+                  type: string
+                sitewiseAssetId:
+                  type: string
+                sitewisePropertyId:
+                  type: string
                 replicas:
                   type: integer
   scope: Namespaced

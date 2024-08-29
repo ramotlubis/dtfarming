@@ -1,0 +1,12 @@
+apiVersion: digitaltwin.example.com/v1
+kind: SensorAgent
+metadata:
+  name: temperature-sensor
+spec:
+  sensorType: temperature
+  image: your-docker-repo/sensor-agent:latest
+  sensorId: temp-sensor-001
+  sensorLocationId: location-001
+  sitewiseAssetId: your-temperature-asset-id
+  sitewisePropertyId: your-temperature-property-id
+  replicas: 1

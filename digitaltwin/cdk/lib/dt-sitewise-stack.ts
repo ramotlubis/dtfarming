@@ -3,10 +3,44 @@ import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { CfnAssetModel, CfnAsset } from 'aws-cdk-lib/aws-iotsitewise';
 import { CfnWorkspace, CfnEntity } from 'aws-cdk-lib/aws-twinmaker';
+import { Role, ServicePrincipal, ManagedPolicy, PolicyDocument, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { Bucket, BucketEncryption } from 'aws-cdk-lib/aws-s3';
 
 export class CdkIotSitewiseStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
+
+    // Create an S3 bucket for TwinMaker with the prefix "dtfarming-"
+    const twinmakerBucket = new Bucket(this, 'TwinMakerBucket', {
+      bucketName: `dtfarming-twinmaker-bucket-${this.account}`,
+      encryption: BucketEncryption.S3_MANAGED,
+      versioned: true,
+    });
+
+    // Create an IAM role for TwinMaker
+    const twinmakerRole = new Role(this, 'TwinMakerRole', {
+      assumedBy: new ServicePrincipal('iottwinmaker.amazonaws.com'),
+      managedPolicies: [
+        ManagedPolicy.fromAwsManagedPolicyName('AmazonS3ReadOnlyAccess'),
+      ],
+      inlinePolicies: {
+        TwinMakerPolicy: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              actions: [
+                'iotsitewise:BatchPutAssetPropertyValue',
+                'iotsitewise:DescribeAsset',
+                'iotsitewise:DescribeAssetModel',
+                'iotsitewise:GetAssetPropertyValue',
+                'iotsitewise:GetAssetPropertyValueHistory',
+                'iottwinmaker:*',
+              ],
+              resources: ['*'],
+            }),
+          ],
+        }),
+      },
+    });
 
     // Function to create SiteWise Asset Models
     const createAssetModel = (name: string, propertyName: string, unit: string) => {
@@ -47,8 +81,8 @@ export class CdkIotSitewiseStack extends Stack {
     // Define IoT TwinMaker Workspace
     const twinmakerWorkspace = new CfnWorkspace(this, 'TwinMakerWorkspace', {
       workspaceId: 'MyWorkspace',
-      role: 'your-twinmaker-role-arn',
-      s3Location: 's3://your-twinmaker-bucket'
+      role: twinmakerRole.roleArn,
+      s3Location: twinmakerBucket.bucketArn
     });
 
     // Define IoT TwinMaker Entities
@@ -78,5 +112,9 @@ export class CdkIotSitewiseStack extends Stack {
 
     new cdk.CfnOutput(this, 'HumidityAssetId', { value: humidityAsset.attrAssetId });
     new cdk.CfnOutput(this, 'HumidityPropertyId', { value: humidityModel.attrAssetModelProperties.find(p => p.name === 'Humidity').id });
+
+    // Output the TwinMaker Role ARN and S3 Bucket Name
+    new cdk.CfnOutput(this, 'TwinMakerRoleArn', { value: twinmakerRole.roleArn });
+    new cdk.CfnOutput(this, 'TwinMakerBucketName', { value: twinmakerBucket.bucketName });
   }
 }

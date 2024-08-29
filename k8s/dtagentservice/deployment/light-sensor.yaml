@@ -1,0 +1,12 @@
+apiVersion: digitaltwin.example.com/v1
+kind: SensorAgent
+metadata:
+  name: light-sensor
+spec:
+  sensorType: light
+  image: your-docker-repo/sensor-agent:latest
+  sensorId: light-sensor-001
+  sensorLocationId: location-002
+  sitewiseAssetId: your-light-asset-id
+  sitewisePropertyId: your-light-property-id
+  replicas: 1

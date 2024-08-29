@@ -1,0 +1,12 @@
+apiVersion: digitaltwin.example.com/v1
+kind: SensorAgent
+metadata:
+  name: humidity-sensor
+spec:
+  sensorType: humidity
+  image: your-docker-repo/sensor-agent:latest
+  sensorId: humidity-sensor-001
+  sensorLocationId: location-004
+  sitewiseAssetId: your-humidity-asset-id
+  sitewisePropertyId: your-humidity-property-id
+  replicas: 1
